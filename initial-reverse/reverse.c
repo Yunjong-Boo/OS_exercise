@@ -13,7 +13,7 @@ typedef struct _ListStack{
 } ListStack;
 
 void Push(ListStack* stack, char *line){
-	Node* new = malloc(sizeof(Node));
+	Node *new = malloc(sizeof(Node));
 	if(new == NULL){
 		fprintf(stderr, "malloc failed\n");
 		exit(1);
@@ -48,8 +48,16 @@ int main(int argc, char **argv){
 
 	/* if input two command-line arguments(input.txt & output.txt) */
 	if(argc == 3){
+		/* cut the path by using strtok */
+		char temp1[20], temp2[20];
+		strcpy(temp1, argv[1]);
+		strcpy(temp2, argv[2]);
+		char *ptr1 = strtok(temp1, "/");
+		ptr1 = strtok(NULL, "/");
+		char *ptr2 = strtok(temp2, "/");
+		ptr2 = strtok(NULL, "/");
 		/* if input, output file is same -> print error message */
-		if(strcmp(argv[1], argv[2]) == 0){
+		if((ptr1 != NULL) && (ptr2 != NULL) && (strcmp(ptr1, ptr2) == 0)){
 			fprintf(stderr, "reverse: input and output file must differ\n");
 			exit(1);
 		}
@@ -101,7 +109,16 @@ int main(int argc, char **argv){
 	}
 	/* if no input argument */
 	else if(argc == 1){
+		/* getline until stdin EOF */
+		while((nread = getline(&input_line, &len, stdin)) != -1){
+			Push(Stack, input_line);
+		}
 
+		/* print line in stdout to reverse order */
+		int size = Stack->size;
+		for(int i = 0; i < size; i++){
+			Pop(Stack, stdout);
+		}
 	}
 	/* too many arguments passed to program */
 	else{
